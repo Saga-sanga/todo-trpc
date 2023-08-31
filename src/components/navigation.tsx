@@ -1,12 +1,16 @@
-"use client"
+"use client";
 import { signOut } from "next-auth/react";
 import GithubButton from "./githubButton";
+import { Session } from "next-auth";
 
-export default function Navigation() {
+export default function Navigation({ session }: { session: Session | null }) {
   return (
     <>
-      <GithubButton />
-      <button onClick={() => signOut()}>Sign out</button>
+      {!session ? (
+        <GithubButton />
+      ) : (
+        <button onClick={() => signOut()}>Sign out</button>
+      )}
     </>
   );
 }
