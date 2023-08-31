@@ -8,7 +8,7 @@ export default async function Home() {
   console.log({ session });
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="flex min-h-screen flex-col items-center">
       <Navigation session={session} />
       {session?.user ? (
         <UserData className="flex flex-col items-center" user={session.user} />

@@ -7,8 +7,8 @@ interface UserProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function UserData({ user, ...props }: UserProps) {
   return (
     <div {...props}>
-      <img className="rounded-full w-16 h-16" src={user.image || ""} alt="user" />
-      <p>Welcome {user.name}</p>
+      {/* <img className="rounded-full w-16 h-16" src={user.image || ""} alt="user" /> */}
+      <p className="text-3xl font-medium">Welcome {user.name}</p>
       <span>{user.email}</span>
     </div>
   );
