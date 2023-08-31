@@ -8,13 +8,22 @@ export default async function Home() {
   console.log({ session });
 
   return (
-    <main className="flex min-h-screen flex-col items-center">
-      <Navigation session={session} />
-      {session?.user ? (
-        <UserData className="flex flex-col items-center" user={session.user} />
-      ) : (
-        <div>Hello friend, please Sign In</div>
-      )}
-    </main>
+    <div className="flex min-h-screen flex-col items-center">
+      <header className="w-full">
+        <Navigation session={session} />
+      </header>
+      <main>
+        {session?.user ? (
+          <UserData
+            className="flex flex-col items-center"
+            user={session.user}
+          />
+        ) : (
+          <div className="text-2xl text-primary font-medium">
+            Please Login to save your data
+          </div>
+        )}
+      </main>
+    </div>
   );
 }

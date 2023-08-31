@@ -17,11 +17,13 @@ import { useState } from "react";
 import { Icons } from "./icons";
 import { formSchema } from "@/db/validators";
 import OAuthButtons from "./oauth-buttons";
+import { useToast } from "./ui/use-toast";
 
 type Schema = z.infer<typeof formSchema>;
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const form = useForm<Schema>({
     resolver: zodResolver(formSchema),
@@ -33,7 +35,10 @@ export default function LoginForm() {
   function onSubmit(data: Schema) {
     console.log({ data });
     setIsLoading(true);
-    alert(JSON.stringify(data));
+    toast({
+      title: "Logging in",
+      description: `${JSON.stringify(data)}`
+    })
   }
 
   return (
@@ -77,7 +82,7 @@ export default function LoginForm() {
           </span>
         </div>
       </div>
-      <OAuthButtons isLoading={isLoading} setIsLoading={setIsLoading}/>
+      <OAuthButtons isLoading={isLoading} setIsLoading={setIsLoading} />
       <a
         className="text-center underline text-sm text-muted-foreground"
         href="/register"
