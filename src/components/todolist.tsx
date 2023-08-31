@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import { trpc } from "../app/_trpc/client";
 import { Trash2 as Trash } from "lucide-react";
 import { serverClient } from "../app/_trpc/serverClient";
 import { cn } from "@/lib/utils";
+import { trpc } from "@/app/_trpc/client";
 
 export default function TodoList({
   initalTodos,
