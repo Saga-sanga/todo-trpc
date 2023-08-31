@@ -7,7 +7,6 @@ import { serverClient } from "./_trpc/serverClient";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
-  console.log({ session });
   const initalTodos = await serverClient.todos.getTodos();
 
   return (
