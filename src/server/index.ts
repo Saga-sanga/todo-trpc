@@ -7,11 +7,13 @@ import { todosRouter } from "./routers/todos";
 
 export const db = drizzle(sql);
 
-migrate(db, { migrationsFolder: "drizzle" });
+// Run migrate only when the development environment
+process.env.NODE_ENV === "development" &&
+  migrate(db, { migrationsFolder: "drizzle" });
 
 export const appRouter = router({
   user: userRouter,
-  todos: todosRouter
+  todos: todosRouter,
 });
 
 export type AppRouter = typeof appRouter;
