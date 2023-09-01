@@ -7,7 +7,11 @@ import { serverClient } from "./_trpc/serverClient";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
-  const initalTodos = await serverClient.todos.getTodos();
+  const initalTodos = await serverClient.todos.getTodos(
+    session?.user?.email ?? "guest"
+  );
+
+  console.log({ initalTodos });
 
   return (
     <div className="flex min-h-screen flex-col items-center">
@@ -25,7 +29,7 @@ export default async function Home() {
             Please Login to save your data
           </div>
         )}
-        <TodoList initalTodos={initalTodos} />
+        <TodoList initalTodos={initalTodos} session={session} />
       </main>
     </div>
   );

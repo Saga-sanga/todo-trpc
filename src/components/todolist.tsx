@@ -4,39 +4,47 @@ import { Trash2 as Trash } from "lucide-react";
 import { serverClient } from "../app/_trpc/serverClient";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/app/_trpc/client";
+import { Session } from "next-auth";
 
-export default function TodoList({
-  initalTodos,
-}: {
+type TodoListProps = {
   initalTodos: Awaited<ReturnType<(typeof serverClient)["todos"]["getTodos"]>>;
-}) {
+  session: Session | null;
+};
+
+export default function TodoList({ initalTodos, session }: TodoListProps) {
   const utils = trpc.useContext();
-  const getTodos = trpc.todos.getTodos.useQuery(undefined, {
-    initialData: initalTodos,
-    staleTime: 3 * 1000,
-  });
+  const getTodos = trpc.todos.getTodos.useQuery(
+    session?.user?.email ?? "guest",
+    {
+      initialData: initalTodos,
+      staleTime: 3 * 1000,
+    }
+  );
 
   const addTodo = trpc.todos.addTodo.useMutation({
     onMutate: async (newTodo) => {
       await utils.todos.getTodos.cancel();
       const prevData = utils.todos.getTodos.getData();
       utils.todos.getTodos.setData(
-        undefined,
+        session?.user?.email ?? "guest",
         (old) =>
           old && [
             ...old,
             {
               id: old.length ? old[old?.length - 1].id + 1 : 1,
               done: false,
-              content: newTodo,
-              userId: old[0]?.userId || null,
+              content: newTodo.content,
+              userId: newTodo.userId,
             },
           ]
       );
       return { prevData };
     },
     onError: (err, newTodo, context) => {
-      utils.todos.getTodos.setData(undefined, context?.prevData);
+      utils.todos.getTodos.setData(
+        session?.user?.email ?? "guest",
+        context?.prevData
+      );
     },
     onSettled: () => getTodos.refetch(),
   });
@@ -45,7 +53,7 @@ export default function TodoList({
     onMutate: async (doneState) => {
       await utils.todos.getTodos.cancel();
       const prevState = utils.todos.getTodos.getData();
-      utils.todos.getTodos.setData(undefined, (old) => {
+      utils.todos.getTodos.setData(session?.user?.email ?? "guest", (old) => {
         if (old) {
           const index = old.findIndex((item) => item.id === doneState.id);
           old[index].done = doneState.done;
@@ -55,7 +63,10 @@ export default function TodoList({
       return { prevState };
     },
     onError: (err, prevData, context) =>
-      utils.todos.getTodos.setData(undefined, context?.prevState),
+      utils.todos.getTodos.setData(
+        session?.user?.email ?? "guest",
+        context?.prevState
+      ),
     onSettled: () => utils.todos.getTodos.invalidate(),
   });
 
@@ -63,7 +74,7 @@ export default function TodoList({
     onMutate: async ({ id }) => {
       await utils.todos.getTodos.cancel();
       const prevState = utils.todos.getTodos.getData();
-      utils.todos.getTodos.setData(undefined, (old) => {
+      utils.todos.getTodos.setData(session?.user?.email ?? "guest", (old) => {
         if (old) {
           const index = old.findIndex((ele) => ele.id === id);
           old.splice(index, 1);
@@ -73,14 +84,17 @@ export default function TodoList({
       return { prevState };
     },
     onError: (err, prevData, context) =>
-      utils.todos.getTodos.setData(undefined, context?.prevState),
+      utils.todos.getTodos.setData(
+        session?.user?.email ?? "guest",
+        context?.prevState
+      ),
     onSettled: () => utils.todos.getTodos.invalidate(),
   });
   const [content, setContent] = useState("");
 
   const handleSubmit = async () => {
     if (content.length) {
-      addTodo.mutate(content);
+      addTodo.mutate({ content, userId: session?.user?.email ?? "guest" });
       setContent("");
     }
   };

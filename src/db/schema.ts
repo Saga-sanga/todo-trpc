@@ -14,21 +14,21 @@ import type { AdapterAccount } from "@auth/core/adapters";
 export const todos = pgTable("todo", {
   id: serial("id").primaryKey(),
   content: varchar("content", { length: 50 }),
-  userId: integer("user_id"),
+  userId: text("user_id"),
   done: boolean("done"),
 });
 
 export const todosRelations = relations(todos, ({ one }) => ({
   author: one(users, {
     fields: [todos.userId],
-    references: [users.id],
+    references: [users.email],
   }),
 }));
 
 export const users = pgTable("user", {
   id: text("id").notNull().primaryKey(),
   name: text("name"),
-  email: text("email").notNull(),
+  email: text("email").notNull().unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
 });

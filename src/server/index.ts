@@ -4,12 +4,10 @@ import { drizzle } from "drizzle-orm/vercel-postgres";
 import { migrate } from "drizzle-orm/vercel-postgres/migrator";
 import { userRouter } from "./routers/user";
 import { todosRouter } from "./routers/todos";
-import { todos } from "@/db/schema";
+import * as schema from "@/db/schema";
+import { eq } from "drizzle-orm";
 
-export const db = drizzle(sql);
-
-// const data = await db.select().from(todos);
-// console.log(data);
+export const db = drizzle(sql, { schema });
 
 // Run migrate only when the development environment
 process.env.NODE_ENV === "development" &&
@@ -18,6 +16,15 @@ process.env.NODE_ENV === "development" &&
 export const appRouter = router({
   user: userRouter,
   todos: todosRouter,
+  testRoute: publicProcedure.query(
+    async () =>
+      await db.query.users.findFirst({
+        where: eq(schema.users.email, "vulcan248@gmail.com"),
+        with: {
+          todos: true,
+        },
+      })
+  ),
 });
 
 export type AppRouter = typeof appRouter;
