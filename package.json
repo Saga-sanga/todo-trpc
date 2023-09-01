@@ -52,6 +52,7 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
+    "@types/react-beautiful-dnd": "^13.1.4",
     "drizzle-kit": "^0.19.13"
   }
 }
