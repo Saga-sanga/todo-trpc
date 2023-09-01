@@ -11,8 +11,6 @@ export default async function Home() {
     session?.user?.email ?? "guest"
   );
 
-  console.log({ initalTodos });
-
   return (
     <div className="flex min-h-screen flex-col items-center">
       <header className="w-full">
@@ -25,8 +23,11 @@ export default async function Home() {
             user={session.user}
           />
         ) : (
-          <div className="text-2xl text-primary font-medium text-center my-8">
-            Please Login to save your data
+          <div className="text-center my-8">
+            <h1 className="text-3xl text-primary font-medium">
+              Please Login to save private data.
+            </h1>
+            <p className="text-xl text-primary">You are currently on a shared guest account.</p>
           </div>
         )}
         <TodoList initalTodos={initalTodos} session={session} />

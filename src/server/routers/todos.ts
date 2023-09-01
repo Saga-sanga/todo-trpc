@@ -8,6 +8,7 @@ export const todosRouter = router({
   getTodos: publicProcedure.input(z.string()).query(async ({ input }) => {
     return await db.query.todos.findMany({
       where: eq(schema.todos.userId, input),
+      orderBy: (todos, { asc }) => [asc(todos.id)],
     });
   }),
   addTodo: publicProcedure
