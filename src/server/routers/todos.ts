@@ -6,10 +6,11 @@ import { z } from "zod";
 
 export const todosRouter = router({
   getTodos: publicProcedure.input(z.string()).query(async ({ input }) => {
-    return await db.query.todos.findMany({
+    const todos = await db.query.todos.findMany({
       where: eq(schema.todos.userId, input),
       orderBy: (todos, { asc }) => [asc(todos.id)],
     });
+    return todos;
   }),
   addTodo: publicProcedure
     .input(
@@ -39,9 +40,10 @@ export const todosRouter = router({
   removeTodo: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
-      return await db
+      const todo = await db
         .delete(schema.todos)
         .where(eq(schema.todos.id, input.id))
         .returning();
+      return todo;
     }),
 });

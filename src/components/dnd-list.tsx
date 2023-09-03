@@ -35,7 +35,11 @@ const reorder = (list: TodoItems, startIndex: number, endIndex: number) => {
   return result;
 };
 
-export default function DragDropList({ initialItems }: { initialItems: TodoItems }) {
+export default function DragDropList({
+  initialItems,
+}: {
+  initialItems: TodoItems;
+}) {
   const [items, setItems] = useState<TodoItems>(initialItems);
 
   const onDragEnd = (result: DropResult) => {
@@ -63,7 +67,11 @@ export default function DragDropList({ initialItems }: { initialItems: TodoItems
         {(provided) => (
           <div ref={provided.innerRef} {...provided.droppableProps}>
             {items.map((item, index) => (
-              <Draggable key={item.id} draggableId={`item-${item.id}`} index={index}>
+              <Draggable
+                key={item.id}
+                draggableId={`item-${item.id}`}
+                index={index}
+              >
                 {(provided, snapshot) => (
                   <div
                     className={cn(
@@ -82,32 +90,6 @@ export default function DragDropList({ initialItems }: { initialItems: TodoItems
             {provided.placeholder}
           </div>
         )}
-        {/* {(provided, snapshot) => (
-          <div
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-            style={getListStyle(snapshot.isDraggingOver)}
-          >
-            {items.map((item, index) => (
-              <Draggable key={item.id} draggableId={item.id} index={index}>
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    style={getItemStyle(
-                      snapshot.isDragging,
-                      provided.draggableProps.style
-                    )}
-                  >
-                    {item.content}
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </div>
-        )} */}
       </Droppable>
     </DragDropContext>
   );

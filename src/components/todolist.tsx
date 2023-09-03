@@ -11,6 +11,8 @@ export type TodoItems = Awaited<
   ReturnType<(typeof serverClient)["todos"]["getTodos"]>
 >;
 
+export type TodoItem = TodoItems[number];
+
 type TodoListProps = {
   initalTodos: TodoItems;
   session: Session | null;
@@ -29,7 +31,9 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
   const addTodo = trpc.todos.addTodo.useMutation({
     onMutate: async (newTodo) => {
       await utils.todos.getTodos.cancel();
-      const prevData = utils.todos.getTodos.getData();
+      const prevData = utils.todos.getTodos.getData(
+        session?.user?.email ?? "guest"
+      );
       utils.todos.getTodos.setData(
         session?.user?.email ?? "guest",
         (old) =>
@@ -78,7 +82,9 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
   const removeTodo = trpc.todos.removeTodo.useMutation({
     onMutate: async ({ id }) => {
       await utils.todos.getTodos.cancel();
-      const prevState = utils.todos.getTodos.getData();
+      const prevState = utils.todos.getTodos.getData(
+        session?.user?.email ?? "guest"
+      );
       utils.todos.getTodos.setData(session?.user?.email ?? "guest", (old) => {
         if (old) {
           const index = old.findIndex((ele) => ele.id === id);
@@ -109,7 +115,7 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
       <h1 className="text-4xl text-center font-bold text-emerald-500">
         World's Best Todo List
       </h1>
-      <div className="text-black my-5 text-3xl">
+      <div className="text-black my-5 text-3xl w-[32rem] space-y-2">
         {getTodos?.data?.map((todo) => (
           <div key={todo.id} className="flex gap-3 items-center">
             <input
@@ -122,7 +128,10 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
               }
             />
             <label
-              className={cn("dark:text-white", todo.done && "line-through")}
+              className={cn(
+                "dark:text-white text-lg leading-none",
+                todo.done && "line-through"
+              )}
               htmlFor={`check-${todo.id}`}
             >
               {todo.content}
