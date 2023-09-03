@@ -1,14 +1,18 @@
 "use client";
-import { useState } from "react";
-import { Trash2 as Trash } from "lucide-react";
-import { serverClient } from "../app/_trpc/serverClient";
-import { cn } from "@/lib/utils";
 import { trpc } from "@/app/_trpc/client";
+import { cn } from "@/lib/utils";
+import { Trash2 as Trash } from "lucide-react";
 import { Session } from "next-auth";
-import {DragDropContext} from "react-beautiful-dnd"
+import { useState } from "react";
+import { serverClient } from "../app/_trpc/serverClient";
+import DragDropList from "./dnd-list";
+
+export type TodoItems = Awaited<
+  ReturnType<(typeof serverClient)["todos"]["getTodos"]>
+>;
 
 type TodoListProps = {
-  initalTodos: Awaited<ReturnType<(typeof serverClient)["todos"]["getTodos"]>>;
+  initalTodos: TodoItems;
   session: Session | null;
 };
 
@@ -105,35 +109,33 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
       <h1 className="text-4xl text-center font-bold text-emerald-500">
         World's Best Todo List
       </h1>
-      <DragDropContext onDragEnd={() => console.log("Drag End")}>
-        <div className="text-black my-5 text-3xl">
-          {getTodos?.data?.map((todo) => (
-            <div key={todo.id} className="flex gap-3 items-center">
-              <input
-                type="checkbox"
-                id={`check-${todo.id}`}
-                checked={!!todo.done}
-                style={{ zoom: 1.6 }}
-                onChange={async () =>
-                  setDone.mutate({ id: todo.id, done: !todo.done })
-                }
-              />
-              <label
-                className={cn("dark:text-white", todo.done && "line-through")}
-                htmlFor={`check-${todo.id}`}
-              >
-                {todo.content}
-              </label>
-              <button
-                className="ml-auto"
-                onClick={async () => removeTodo.mutate({ id: todo.id })}
-              >
-                <Trash className="stroke-red-400 hover:stroke-red-600" />
-              </button>
-            </div>
-          ))}
-        </div>
-      </DragDropContext>
+      <div className="text-black my-5 text-3xl">
+        {getTodos?.data?.map((todo) => (
+          <div key={todo.id} className="flex gap-3 items-center">
+            <input
+              type="checkbox"
+              id={`check-${todo.id}`}
+              checked={!!todo.done}
+              style={{ zoom: 1.6 }}
+              onChange={async () =>
+                setDone.mutate({ id: todo.id, done: !todo.done })
+              }
+            />
+            <label
+              className={cn("dark:text-white", todo.done && "line-through")}
+              htmlFor={`check-${todo.id}`}
+            >
+              {todo.content}
+            </label>
+            <button
+              className="ml-auto"
+              onClick={async () => removeTodo.mutate({ id: todo.id })}
+            >
+              <Trash className="stroke-red-400 hover:stroke-red-600" />
+            </button>
+          </div>
+        ))}
+      </div>
       <div className="flex gap-3 items-center">
         <label htmlFor="content">Todo</label>
         <input
@@ -151,6 +153,7 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
           Add Todo
         </button>
       </div>
+      <DragDropList initialItems={getTodos.data} />
     </div>
   );
 }
