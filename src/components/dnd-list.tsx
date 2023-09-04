@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -31,13 +31,17 @@ const reorder = (list: TodoItems, startIndex: number, endIndex: number) => {
 export default function DragDropList({
   initialItems,
   handleRemoveTodo,
-  updateStatusTodo
+  updateStatusTodo,
 }: {
   initialItems: TodoItems;
-  handleRemoveTodo: (item: TodoItem) => Promise<void>
-  updateStatusTodo: (item: TodoItem) => Promise<void>
+  handleRemoveTodo: (item: TodoItem) => Promise<void>;
+  updateStatusTodo: (item: TodoItem) => Promise<void>;
 }) {
   const [items, setItems] = useState<TodoItems>(initialItems);
+  
+  useEffect(() => {
+    setItems(initialItems);
+  }, [initialItems]);
 
   const onDragEnd = (result: DropResult) => {
     // dropped outside the list
@@ -62,7 +66,11 @@ export default function DragDropList({
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="droppable">
         {(provided) => (
-          <div className="border divide-y rounded-lg" ref={provided.innerRef} {...provided.droppableProps}>
+          <div
+            className="border divide-y rounded-md"
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
             {items.map((item, index) => (
               <Draggable
                 key={item.id}
@@ -72,8 +80,8 @@ export default function DragDropList({
                 {(provided, snapshot) => (
                   <div
                     className={cn(
-                      "flex  py-2 px-4 gap-3 items-center",
-                      snapshot.isDragging && "bg-background border"
+                      "flex hover:bg-muted py-2 px-4 gap-3 items-center",
+                      snapshot.isDragging && "bg-muted border"
                     )}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
@@ -84,9 +92,7 @@ export default function DragDropList({
                       id={`check-${item.id}`}
                       checked={!!item.done}
                       style={{ zoom: 1.4 }}
-                      onChange={() =>
-                        updateStatusTodo(item)
-                      }
+                      onChange={() => updateStatusTodo(item)}
                     />
                     <label
                       className={cn(
@@ -99,13 +105,13 @@ export default function DragDropList({
                     </label>
                     <div className="ml-auto flex items-center">
                       <Button
-                        className="h-7 border border-r-0 rounded-s-lg rounded-e-none"
+                        className="h-7 border hover:border-primary hover:z-10 -mr-[1px] rounded-s-lg rounded-e-none"
                         variant="ghost"
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
                       <Button
-                        className="h-7 group border rounded-s-none rounded-e-lg"
+                        className="h-7 group border hover:border-primary hover:z-10 rounded-s-none rounded-e-lg"
                         variant="ghost"
                         onClick={() => handleRemoveTodo(item)}
                       >

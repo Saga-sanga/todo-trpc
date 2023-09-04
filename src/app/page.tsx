@@ -18,10 +18,11 @@ export default async function Home() {
       </header>
       <main className="flex flex-col items-center">
         {session?.user ? (
-          <UserData
-            className="flex flex-col items-center"
-            user={session.user}
-          />
+          // <UserData
+          //   className="flex flex-col items-center"
+          //   user={session.user}
+          // />
+          null
         ) : (
           <div className="text-center my-8">
             <h1 className="text-3xl text-primary font-medium">
