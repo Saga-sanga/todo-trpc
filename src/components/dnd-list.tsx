@@ -105,13 +105,13 @@ export default function DragDropList({
                     </label>
                     <div className="ml-auto flex items-center">
                       <Button
-                        className="h-7 border hover:border-primary hover:z-10 -mr-[1px] rounded-s-lg rounded-e-none"
+                        className="h-7 px-2 border hover:border-primary hover:z-10 -mr-[1px] rounded-s-lg rounded-e-none"
                         variant="ghost"
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
                       <Button
-                        className="h-7 group border hover:border-primary hover:z-10 rounded-s-none rounded-e-lg"
+                        className="h-7 px-2 group border hover:border-primary hover:z-10 rounded-s-none rounded-e-lg"
                         variant="ghost"
                         onClick={() => handleRemoveTodo(item)}
                       >

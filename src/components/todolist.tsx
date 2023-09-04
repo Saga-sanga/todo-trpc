@@ -127,11 +127,13 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
     <div className="mb-10">
       <h1 className="text-4xl text-center font-bold text-primary">Todo List</h1>
       <div className="text-black my-5 text-3xl w-[32rem]">
-        <DragDropList
-          initialItems={getTodos.data}
-          handleRemoveTodo={handleRemoveTodo}
-          updateStatusTodo={updateStatusTodo}
-        />
+        {getTodos.data.length !== 0 && (
+          <DragDropList
+            initialItems={getTodos.data}
+            handleRemoveTodo={handleRemoveTodo}
+            updateStatusTodo={updateStatusTodo}
+          />
+        )}
         {/* {getTodos?.data?.map((todo) => (
           <div
             key={todo.id}
