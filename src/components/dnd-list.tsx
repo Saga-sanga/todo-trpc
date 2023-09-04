@@ -37,7 +37,8 @@ export default function DragDropList({
   handleRemoveTodo: (item: TodoItem) => Promise<void>;
   updateStatusTodo: (item: TodoItem) => Promise<void>;
 }) {
-  const [items, setItems] = useState<TodoItems>(initialItems);
+  // Cannot use SSR because react-beautiful-dnd has handler mounting issues
+  const [items, setItems] = useState<TodoItems>([]);
   
   useEffect(() => {
     setItems(initialItems);
@@ -63,7 +64,8 @@ export default function DragDropList({
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <>
+     {items.length !== 0 && <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="droppable">
         {(provided) => (
           <div
@@ -126,6 +128,7 @@ export default function DragDropList({
           </div>
         )}
       </Droppable>
-    </DragDropContext>
+    </DragDropContext>}
+    </>
   );
 }

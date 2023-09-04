@@ -8,10 +8,10 @@ export default function Page() {
   return (
     <main className="grid lg:grid-cols-2 min-h-screen">
       <div className="hidden col-span-1 flex-col bg-primary p-10 text-background lg:flex">
-        <div className=" text-lg font-medium flex items-center">
+        <Link href="/" className=" text-lg font-medium flex items-center">
           <ListTodo className="w-10 h-10 mr-2 stroke-background" />
           TODO App
-        </div>
+        </Link>
         <div className="mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
