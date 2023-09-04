@@ -1,11 +1,13 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import { cn } from "@/lib/utils";
-import { Trash2 as Trash } from "lucide-react";
+import { Trash2 as Trash, Edit } from "lucide-react";
 import { Session } from "next-auth";
 import { useState } from "react";
 import { serverClient } from "../app/_trpc/serverClient";
 import DragDropList from "./dnd-list";
+import TodoItem from "./todo-item";
+import { Button } from "./ui/button";
 
 export type TodoItems = Awaited<
   ReturnType<(typeof serverClient)["todos"]["getTodos"]>
@@ -20,6 +22,7 @@ type TodoListProps = {
 
 export default function TodoList({ initalTodos, session }: TodoListProps) {
   const utils = trpc.useContext();
+  // TODO: Update state from todo dnd component
   const getTodos = trpc.todos.getTodos.useQuery(
     session?.user?.email ?? "guest",
     {
@@ -61,7 +64,9 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
   const setDone = trpc.todos.setDone.useMutation({
     onMutate: async (doneState) => {
       await utils.todos.getTodos.cancel();
-      const prevState = utils.todos.getTodos.getData();
+      const prevState = utils.todos.getTodos.getData(
+        session?.user?.email ?? "guest"
+      );
       utils.todos.getTodos.setData(session?.user?.email ?? "guest", (old) => {
         if (old) {
           const index = old.findIndex((item) => item.id === doneState.id);
@@ -110,45 +115,66 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
     }
   };
 
+  const updateStatusTodo = async (item: TodoItem) => {
+    setDone.mutate({ id: item.id, done: !item.done });
+  };
+
+  const handleRemoveTodo = async (item: TodoItem) => {
+    removeTodo.mutate({ id: item.id });
+  };
+
   return (
-    <div>
-      <h1 className="text-4xl text-center font-bold text-emerald-500">
-        World's Best Todo List
-      </h1>
-      <div className="text-black my-5 text-3xl w-[32rem] space-y-2">
-        {getTodos?.data?.map((todo) => (
-          <div key={todo.id} className="flex gap-3 items-center">
+    <div className="mb-10">
+      <h1 className="text-4xl text-center font-bold text-primary">Todo List</h1>
+      <div className="text-black my-5 text-3xl w-[32rem]">
+        <DragDropList
+          initialItems={getTodos.data}
+          handleRemoveTodo={handleRemoveTodo}
+          updateStatusTodo={updateStatusTodo}
+        />
+        {/* {getTodos?.data?.map((todo) => (
+          <div
+            key={todo.id}
+            className="flex border border-b-0 last:border-b first:rounded-t-md last:rounded-b-md p-4 gap-3 items-center"
+          >
             <input
               type="checkbox"
               id={`check-${todo.id}`}
               checked={!!todo.done}
-              style={{ zoom: 1.6 }}
+              style={{ zoom: 1.4 }}
               onChange={async () =>
                 setDone.mutate({ id: todo.id, done: !todo.done })
               }
             />
             <label
               className={cn(
-                "dark:text-white text-lg leading-none",
+                "dark:text-white text-sm leading-none",
                 todo.done && "line-through"
               )}
               htmlFor={`check-${todo.id}`}
             >
               {todo.content}
             </label>
-            <button
-              className="ml-auto"
-              onClick={async () => removeTodo.mutate({ id: todo.id })}
-            >
-              <Trash className="stroke-red-400 hover:stroke-red-600" />
-            </button>
+            <div className="ml-auto flex items-center">
+              <Button className="border border-r-0 rounded-s-lg rounded-e-none" variant="ghost">
+                <Edit className="w-4 h-4"/>
+              </Button>
+              <Button
+                className="group border rounded-s-none rounded-e-lg"
+                variant="ghost"
+                onClick={async () => removeTodo.mutate({ id: todo.id })}
+              >
+                <Trash className="w-4 h-4 stroke-red-400 group-hover:stroke-red-600" />
+              </Button>
+            </div>
           </div>
-        ))}
+        ))} */}
       </div>
       <div className="flex gap-3 items-center">
-        <label htmlFor="content">Todo</label>
+        {/* <label htmlFor="content">Todo</label> */}
         <input
           id="content"
+          placeholder="Input todo"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={(e) => (e.key === "Enter" ? handleSubmit() : null)}
@@ -162,7 +188,6 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
           Add Todo
         </button>
       </div>
-      <DragDropList initialItems={getTodos.data} />
     </div>
   );
 }

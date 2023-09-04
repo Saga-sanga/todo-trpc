@@ -7,24 +7,17 @@ import {
   DropResult,
   Droppable,
 } from "react-beautiful-dnd";
-import { TodoItems } from "./todolist";
+import { TodoItems, TodoItem } from "./todolist";
+import { Edit, Trash2 as Trash } from "lucide-react";
+import { Button } from "./ui/button";
+import { trpc } from "@/app/_trpc/client";
+import { Session } from "next-auth";
 
 type Item = {
   id: string;
   content: string;
   done: boolean;
 };
-
-// fake data generator
-const getItems = (count: number) =>
-  Array.from({ length: count }, (v, k) => k).map(
-    (k) =>
-      ({
-        id: `item-${k}`,
-        content: `item ${k}`,
-        done: false,
-      } satisfies Item)
-  );
 
 // a little function to help us with reordering the result
 const reorder = (list: TodoItems, startIndex: number, endIndex: number) => {
@@ -37,8 +30,12 @@ const reorder = (list: TodoItems, startIndex: number, endIndex: number) => {
 
 export default function DragDropList({
   initialItems,
+  handleRemoveTodo,
+  updateStatusTodo
 }: {
   initialItems: TodoItems;
+  handleRemoveTodo: (item: TodoItem) => Promise<void>
+  updateStatusTodo: (item: TodoItem) => Promise<void>
 }) {
   const [items, setItems] = useState<TodoItems>(initialItems);
 
@@ -65,7 +62,7 @@ export default function DragDropList({
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="droppable">
         {(provided) => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
+          <div className="border divide-y rounded-lg" ref={provided.innerRef} {...provided.droppableProps}>
             {items.map((item, index) => (
               <Draggable
                 key={item.id}
@@ -75,14 +72,46 @@ export default function DragDropList({
                 {(provided, snapshot) => (
                   <div
                     className={cn(
-                      "w-52 border border-gray-500 mb-2 bg-blue-300 p-2",
-                      snapshot.isDragging && "bg-green-400"
+                      "flex  py-2 px-4 gap-3 items-center",
+                      snapshot.isDragging && "bg-background border"
                     )}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    {item.content}
+                    <input
+                      type="checkbox"
+                      id={`check-${item.id}`}
+                      checked={!!item.done}
+                      style={{ zoom: 1.4 }}
+                      onChange={() =>
+                        updateStatusTodo(item)
+                      }
+                    />
+                    <label
+                      className={cn(
+                        "dark:text-white text-sm leading-none cursor-grab",
+                        item.done && "line-through"
+                      )}
+                      htmlFor={`check-${item.id}`}
+                    >
+                      {item.content}
+                    </label>
+                    <div className="ml-auto flex items-center">
+                      <Button
+                        className="h-7 border border-r-0 rounded-s-lg rounded-e-none"
+                        variant="ghost"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        className="h-7 group border rounded-s-none rounded-e-lg"
+                        variant="ghost"
+                        onClick={() => handleRemoveTodo(item)}
+                      >
+                        <Trash className="w-4 h-4 stroke-red-400 group-hover:stroke-red-600" />
+                      </Button>
+                    </div>
                   </div>
                 )}
               </Draggable>
