@@ -38,7 +38,7 @@ export default function DragDropList({
   updateStatusTodo: (item: TodoItem) => Promise<void>;
 }) {
   // Cannot use SSR because react-beautiful-dnd has handler mounting issues
-  const [items, setItems] = useState<TodoItems>([]);
+  const [items, setItems] = useState<TodoItems>(initialItems);
   
   useEffect(() => {
     setItems(initialItems);
