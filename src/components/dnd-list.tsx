@@ -1,5 +1,7 @@
 "use client";
+import { trpc } from "@/app/_trpc/client";
 import { cn } from "@/lib/utils";
+import { Edit, Trash2 as Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   DragDropContext,
@@ -7,16 +9,14 @@ import {
   DropResult,
   Droppable,
 } from "react-beautiful-dnd";
-import { TodoItems, TodoItem } from "./todolist";
-import { Edit, Trash2 as Trash } from "lucide-react";
+import { TodoItem, TodoItems } from "./todolist";
 import { Button } from "./ui/button";
-import { trpc } from "@/app/_trpc/client";
-import { Session } from "next-auth";
+import TodoListItem from "./todo-item";
 
-type Item = {
-  id: string;
-  content: string;
-  done: boolean;
+type DragDropListProp = {
+  initialItems: TodoItems;
+  handleRemoveTodo: (item: TodoItem) => Promise<void>;
+  updateStatusTodo: (item: TodoItem) => Promise<void>;
 };
 
 // a little function to help us with reordering the result
@@ -32,12 +32,9 @@ export default function DragDropList({
   initialItems,
   handleRemoveTodo,
   updateStatusTodo,
-}: {
-  initialItems: TodoItems;
-  handleRemoveTodo: (item: TodoItem) => Promise<void>;
-  updateStatusTodo: (item: TodoItem) => Promise<void>;
-}) {
+}: DragDropListProp) {
   const [items, setItems] = useState<TodoItems>(initialItems);
+
   const utils = trpc.useContext();
   const reorderTodo = trpc.todos.reorderTodos.useMutation({
     onSettled: () => utils.todos.getTodos.refetch(),
@@ -98,26 +95,36 @@ export default function DragDropList({
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
-                        <input
+                        <TodoListItem
+                          item={item}
+                          handleRemoveTodo={handleRemoveTodo}
+                          updateStatusTodo={updateStatusTodo}
+                        />
+                        {/* <input
                           type="checkbox"
                           id={`check-${item.id}`}
                           checked={!!item.done}
                           style={{ zoom: 1.4 }}
                           onChange={() => updateStatusTodo(item)}
                         />
-                        <label
-                          className={cn(
-                            "dark:text-white text-sm leading-none cursor-grab",
-                            item.done && "line-through"
-                          )}
-                          htmlFor={`check-${item.id}`}
-                        >
-                          {item.content}
-                        </label>
+                        {editing ? (
+                          <input type="text" value={item.content ?? ""} />
+                        ) : (
+                          <label
+                            className={cn(
+                              "dark:text-white text-sm leading-none cursor-grab",
+                              item.done && "line-through"
+                            )}
+                            htmlFor={`check-${item.id}`}
+                          >
+                            {item.content}
+                          </label>
+                        )}
                         <div className="ml-auto flex items-center">
                           <Button
                             className="h-7 px-2 border hover:border-primary hover:z-10 -mr-[1px] rounded-s-lg rounded-e-none"
                             variant="ghost"
+                            onClick={() => setEditing(state => !state)}
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
@@ -128,7 +135,7 @@ export default function DragDropList({
                           >
                             <Trash className="w-4 h-4 stroke-red-400 group-hover:stroke-red-600" />
                           </Button>
-                        </div>
+                        </div> */}
                       </div>
                     )}
                   </Draggable>

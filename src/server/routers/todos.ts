@@ -31,6 +31,14 @@ export const todosRouter = router({
         .values({ content, done: false, userId, position });
       return true;
     }),
+  editTodo: publicProcedure
+    .input(z.object({ id: z.number(), content: z.string() }))
+    .mutation(async ({ input: { id, content } }) => {
+      return await db
+        .update(schema.todos)
+        .set({ content })
+        .where(eq(schema.todos.id, id));
+    }),
   setDone: publicProcedure
     .input(
       z.object({
@@ -65,5 +73,6 @@ export const todosRouter = router({
             .where(eq(schema.todos.id, id));
         })
       );
+      return true;
     }),
 });

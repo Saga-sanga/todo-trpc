@@ -1,88 +1,80 @@
 import { trpc } from "@/app/_trpc/client";
 import { cn } from "@/lib/utils";
-import { Trash2 as Trash } from "lucide-react";
+import { Edit, Trash2 as Trash } from "lucide-react";
 import { Session } from "next-auth";
 import { TodoItem } from "./todolist";
+import { Button } from "./ui/button";
+import { useState } from "react";
 
-export default function TodoItem({
-  todo,
-  session,
+export default function TodoListItem({
+  item,
+  updateStatusTodo,
+  handleRemoveTodo,
 }: {
-  todo: TodoItem;
-  session: Session | null;
+  item: TodoItem;
+  handleRemoveTodo: (item: TodoItem) => Promise<void>;
+  updateStatusTodo: (item: TodoItem) => Promise<void>;
 }) {
   const utils = trpc.useContext();
-  const setDone = trpc.todos.setDone.useMutation({
-    onMutate: async (doneState) => {
-      await utils.todos.getTodos.cancel();
-      const prevState = utils.todos.getTodos.getData(
-        session?.user?.email ?? "guest"
-      );
-      utils.todos.getTodos.setData(session?.user?.email ?? "guest", (old) => {
-        if (old) {
-          const index = old.findIndex((item) => item.id === doneState.id);
-          old[index].done = doneState.done;
-        }
-        return old;
-      });
-      return { prevState };
-    },
-    onError: (err, prevData, context) =>
-      utils.todos.getTodos.setData(
-        session?.user?.email ?? "guest",
-        context?.prevState
-      ),
-    onSettled: () => utils.todos.getTodos.invalidate(),
-  });
-
-  const removeTodo = trpc.todos.removeTodo.useMutation({
-    onMutate: async ({ id }) => {
-      await utils.todos.getTodos.cancel();
-      const prevState = utils.todos.getTodos.getData(
-        session?.user?.email ?? "guest"
-      );
-      utils.todos.getTodos.setData(session?.user?.email ?? "guest", (old) => {
-        if (old) {
-          const index = old.findIndex((ele) => ele.id === id);
-          old.splice(index, 1);
-        }
-        console.log(old);
-        return old;
-      });
-      return { prevState };
-    },
-    onError: (err, prevData, context) =>
-      utils.todos.getTodos.setData(
-        session?.user?.email ?? "guest",
-        context?.prevState
-      ),
+  const [editing, setEditing] = useState(false);
+  const [content, setContent] = useState(item.content ?? "");
+  const editTodo = trpc.todos.editTodo.useMutation({
     onSettled: () => utils.todos.getTodos.refetch(),
   });
 
+  const handleSubmit = () => {
+    setEditing(false);
+    console.log(content);
+    editTodo.mutate({ id: item.id, content });
+  };
+
   return (
-    <div key={todo.id} className="flex gap-3 items-center">
+    <>
       <input
         type="checkbox"
-        id={`check-${todo.id}`}
-        checked={!!todo.done}
-        style={{ zoom: 1.6 }}
-        onChange={async () => setDone.mutate({ id: todo.id, done: !todo.done })}
+        id={`check-${item.id}`}
+        checked={!!item.done}
+        style={{ zoom: 1.4 }}
+        onChange={() => updateStatusTodo(item)}
       />
-      <label
-        className={cn(
-          "dark:text-white text-lg leading-none",
-          todo.done && "line-through"
-        )}
-        htmlFor={`check-${todo.id}`}
-      >
-        {todo.content}
-      </label>
-      <button
-        className="ml-auto"
-        onClick={async () => removeTodo.mutate({ id: todo.id })}
-      >
-        <Trash className="stroke-red-400 hover:stroke-red-600" />
-      </button>
-    </div>
+      {editing ? (
+        <input
+          type="text"
+          className="text-sm border px-2 py-1 rounded-md border-primary focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+        />
+      ) : (
+        <label
+          className={cn(
+            "dark:text-white text-sm leading-none cursor-grab",
+            item.done && "line-through"
+          )}
+          htmlFor={`check-${item.id}`}
+        >
+          {content}
+        </label>
+      )}
+      <div className="ml-auto flex items-center">
+        <Button
+          className="h-7 px-2 border hover:border-primary hover:z-10 -mr-[1px] rounded-s-lg rounded-e-none"
+          variant="ghost"
+          onClick={() => {
+            setEditing((state) => !state);
+            if (editing) handleSubmit();
+          }}
+        >
+          <Edit className="w-4 h-4" />
+        </Button>
+        <Button
+          className="h-7 px-2 group border hover:border-primary hover:z-10 rounded-s-none rounded-e-lg"
+          variant="ghost"
+          onClick={() => handleRemoveTodo(item)}
+        >
+          <Trash className="w-4 h-4 stroke-red-400 group-hover:stroke-red-600" />
+        </Button>
+      </div>
+    </>
   );
 }
