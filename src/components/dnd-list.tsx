@@ -1,0 +1,151 @@
+"use client";
+import { trpc } from "@/app/_trpc/client";
+import { cn } from "@/lib/utils";
+import { Edit, Trash2 as Trash } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  DragDropContext,
+  Draggable,
+  DropResult,
+  Droppable,
+} from "react-beautiful-dnd";
+import { TodoItem, TodoItems } from "./todolist";
+import { Button } from "./ui/button";
+import TodoListItem from "./todo-item";
+
+type DragDropListProp = {
+  initialItems: TodoItems;
+  handleRemoveTodo: (item: TodoItem) => Promise<void>;
+  updateStatusTodo: (item: TodoItem) => Promise<void>;
+};
+
+// a little function to help us with reordering the result
+const reorder = (list: TodoItems, startIndex: number, endIndex: number) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
+export default function DragDropList({
+  initialItems,
+  handleRemoveTodo,
+  updateStatusTodo,
+}: DragDropListProp) {
+  const [items, setItems] = useState<TodoItems>(initialItems);
+
+  const utils = trpc.useContext();
+  const reorderTodo = trpc.todos.reorderTodos.useMutation({
+    onSettled: () => utils.todos.getTodos.refetch(),
+  });
+
+  useEffect(() => {
+    setItems(initialItems);
+  }, [initialItems]);
+
+  const onDragEnd = (result: DropResult) => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    if (result.destination.index === result.source.index) {
+      return;
+    }
+
+    const reorderedItems = reorder(
+      items,
+      result.source.index,
+      result.destination.index
+    );
+
+    setItems(reorderedItems);
+
+    const newList = reorderedItems.map((item) => item.id);
+    console.log("Reordered:", newList);
+    console.log("Reordered items:", reorderedItems);
+    reorderTodo.mutate({ ids: reorderedItems.map((item) => item.id) });
+  };
+
+  return (
+    <>
+      {items.length !== 0 && (
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided) => (
+              <div
+                className="border divide-y rounded-md"
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                {items.map((item, index) => (
+                  <Draggable
+                    key={item.id}
+                    draggableId={`item-${item.id}`}
+                    index={index}
+                  >
+                    {(provided, snapshot) => (
+                      <div
+                        className={cn(
+                          "flex hover:bg-muted py-2 px-4 gap-3 items-center",
+                          snapshot.isDragging && "bg-muted border"
+                        )}
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <TodoListItem
+                          item={item}
+                          handleRemoveTodo={handleRemoveTodo}
+                          updateStatusTodo={updateStatusTodo}
+                        />
+                        {/* <input
+                          type="checkbox"
+                          id={`check-${item.id}`}
+                          checked={!!item.done}
+                          style={{ zoom: 1.4 }}
+                          onChange={() => updateStatusTodo(item)}
+                        />
+                        {editing ? (
+                          <input type="text" value={item.content ?? ""} />
+                        ) : (
+                          <label
+                            className={cn(
+                              "dark:text-white text-sm leading-none cursor-grab",
+                              item.done && "line-through"
+                            )}
+                            htmlFor={`check-${item.id}`}
+                          >
+                            {item.content}
+                          </label>
+                        )}
+                        <div className="ml-auto flex items-center">
+                          <Button
+                            className="h-7 px-2 border hover:border-primary hover:z-10 -mr-[1px] rounded-s-lg rounded-e-none"
+                            variant="ghost"
+                            onClick={() => setEditing(state => !state)}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            className="h-7 px-2 group border hover:border-primary hover:z-10 rounded-s-none rounded-e-lg"
+                            variant="ghost"
+                            onClick={() => handleRemoveTodo(item)}
+                          >
+                            <Trash className="w-4 h-4 stroke-red-400 group-hover:stroke-red-600" />
+                          </Button>
+                        </div> */}
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      )}
+    </>
+  );
+}

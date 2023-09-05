@@ -13,7 +13,8 @@ import type { AdapterAccount } from "@auth/core/adapters";
 
 export const todos = pgTable("todo", {
   id: serial("id").primaryKey(),
-  content: varchar("content", { length: 50 }),
+  position: integer("position").default(0),
+  content: text("content"),
   userId: text("user_id"),
   done: boolean("done"),
 });

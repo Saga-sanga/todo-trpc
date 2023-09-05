@@ -12,22 +12,19 @@ export default async function Home() {
   );
 
   return (
-    <div className="flex min-h-screen flex-col items-center">
-      <header className="w-full">
+    <div className="flex min-h-screen flex-col items-center space-y-6">
+      <header className="w-full border-b">
         <Navigation session={session} />
       </header>
-      <main className="flex flex-col items-center">
-        {session?.user ? (
-          <UserData
-            className="flex flex-col items-center"
-            user={session.user}
-          />
-        ) : (
+      <main className="flex flex-col items-center container">
+        {!session?.user && (
           <div className="text-center my-8">
-            <h1 className="text-3xl text-primary font-medium">
+            <h1 className="text-3xl font-medium">
               Please Login to save private data.
             </h1>
-            <p className="text-xl text-primary">You are currently on a shared guest account.</p>
+            <p className="text-xl">
+              You are currently on a shared guest account.
+            </p>
           </div>
         )}
         <TodoList initalTodos={initalTodos} session={session} />
