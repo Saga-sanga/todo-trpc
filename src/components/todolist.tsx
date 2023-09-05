@@ -127,8 +127,8 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
   };
 
   return (
-    <div className="mb-10 mx-6 max-w-[32rem]">
-      <h1 className="text-4xl text-center font-bold text-primary">Todo List</h1>
+    <div className="mb-10 mx-6 max-w-[32rem] w-full">
+      <h1 className="text-4xl text-center font-bold">Todo List</h1>
       <div className="text-black my-5 text-3xl w-full">
         <DragDropList
           initialItems={getTodos.data}
@@ -143,12 +143,12 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-          className="text-black flex-grow rounded-md border border-gray-300 py-2 px-4 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          className="text-black flex-grow rounded-md border border-gray-300 py-2 px-4 focus:border-primary focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           type="text"
         />
         <button
           onClick={handleSubmit}
-          className="bg-blue-600 hover:bg-blue-800 text-white rounded-full font-bold py-2 px-4"
+          className="bg-primary hover:bg-primary/90 text-white rounded-full font-bold py-2 px-4"
         >
           Add Todo
         </button>

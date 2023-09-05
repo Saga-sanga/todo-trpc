@@ -5,6 +5,7 @@ import { Session } from "next-auth";
 import { TodoItem } from "./todolist";
 import { Button } from "./ui/button";
 import { useState } from "react";
+import { Checkbox } from "./ui/checkbox";
 
 export default function TodoListItem({
   item,
@@ -30,12 +31,10 @@ export default function TodoListItem({
 
   return (
     <>
-      <input
-        type="checkbox"
+      <Checkbox
         id={`check-${item.id}`}
         checked={!!item.done}
-        style={{ zoom: 1.4 }}
-        onChange={() => updateStatusTodo(item)}
+        onCheckedChange={() => updateStatusTodo(item)}
       />
       {editing ? (
         <input

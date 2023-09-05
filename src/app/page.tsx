@@ -19,10 +19,12 @@ export default async function Home() {
       <main className="flex flex-col items-center container">
         {!session?.user && (
           <div className="text-center my-8">
-            <h1 className="text-3xl text-primary font-medium">
+            <h1 className="text-3xl font-medium">
               Please Login to save private data.
             </h1>
-            <p className="text-xl text-primary">You are currently on a shared guest account.</p>
+            <p className="text-xl">
+              You are currently on a shared guest account.
+            </p>
           </div>
         )}
         <TodoList initalTodos={initalTodos} session={session} />
