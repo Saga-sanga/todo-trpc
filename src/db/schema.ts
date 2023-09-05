@@ -13,6 +13,7 @@ import type { AdapterAccount } from "@auth/core/adapters";
 
 export const todos = pgTable("todo", {
   id: serial("id").primaryKey(),
+  position: integer("position").default(0),
   content: text("content"),
   userId: text("user_id"),
   done: boolean("done"),
@@ -79,55 +80,3 @@ export const verificationTokens = pgTable(
     compoundKey: primaryKey(vt.identifier, vt.token),
   })
 );
-
-// const res = {
-//   "result": {
-//       "data": [
-//           {
-//               "id": 20,
-//               "content": "Enable editing",
-//               "userId": "vulcan248@gmail.com",
-//               "done": false
-//           },
-//           {
-//               "id": 21,
-//               "content": "Enable drag and drop with react-beautiful-dnd",
-//               "userId": "vulcan248@gmail.com",
-//               "done": false
-//           },
-//           {
-//               "id": 22,
-//               "content": "Add light and dark mode",
-//               "userId": "vulcan248@gmail.com",
-//               "done": false
-//           },
-//           {
-//               "id": 23,
-//               "content": "implement email signin",
-//               "userId": "vulcan248@gmail.com",
-//               "done": false
-//           },
-//           {
-//               "id": 24,
-//               "content": "update todolist UI",
-//               "userId": "vulcan248@gmail.com",
-//               "done": false
-//           },
-//           {
-//               "id": 26,
-//               "content": "Break down todolist to smaller components",
-//               "userId": "vulcan248@gmail.com",
-//               "done": false
-//           },
-//           {
-//               "id": 27,
-//               "content": "learn to use nodemailer for email notifications",
-//               "userId": "vulcan248@gmail.com",
-//               "done": false
-//           },
-//           {
-//             "content": "react child element from an array has error removing itself"
-//           }
-//       ]
-//   }
-// }

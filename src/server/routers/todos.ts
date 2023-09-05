@@ -1,14 +1,19 @@
 import * as schema from "@/db/schema";
 import { publicProcedure, router } from "../trpc";
-import { asc, eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from "..";
 import { z } from "zod";
 
 export const todosRouter = router({
   getTodos: publicProcedure.input(z.string()).query(async ({ input }) => {
     const todos = await db.query.todos.findMany({
+      columns: {
+        id: true,
+        content: true,
+        done: true,
+      },
       where: eq(schema.todos.userId, input),
-      orderBy: (todos, { asc }) => [asc(todos.id)],
+      orderBy: (todos, { asc }) => [desc(todos.position)],
     });
     return todos;
   }),
@@ -17,10 +22,13 @@ export const todosRouter = router({
       z.object({
         content: z.string(),
         userId: z.string(),
+        position: z.number(),
       })
     )
-    .mutation(async ({ input: { content, userId } }) => {
-      await db.insert(schema.todos).values({ content, done: false, userId });
+    .mutation(async ({ input: { content, userId, position } }) => {
+      await db
+        .insert(schema.todos)
+        .values({ content, done: false, userId, position });
       return true;
     }),
   setDone: publicProcedure
@@ -45,5 +53,17 @@ export const todosRouter = router({
         .where(eq(schema.todos.id, input.id))
         .returning();
       return todo;
+    }),
+  reorderTodos: publicProcedure
+    .input(z.object({ ids: z.array(z.number()) }))
+    .mutation(async ({ input }) => {
+      await Promise.all(
+        input.ids.reverse().map((id, position) => {
+          return db
+            .update(schema.todos)
+            .set({ position })
+            .where(eq(schema.todos.id, id));
+        })
+      );
     }),
 });

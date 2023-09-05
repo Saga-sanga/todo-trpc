@@ -37,9 +37,12 @@ export default function DragDropList({
   handleRemoveTodo: (item: TodoItem) => Promise<void>;
   updateStatusTodo: (item: TodoItem) => Promise<void>;
 }) {
-  // Cannot use SSR because react-beautiful-dnd has handler mounting issues
   const [items, setItems] = useState<TodoItems>(initialItems);
-  
+  const utils = trpc.useContext();
+  const reorderTodo = trpc.todos.reorderTodos.useMutation({
+    onSettled: () => utils.todos.getTodos.refetch(),
+  });
+
   useEffect(() => {
     setItems(initialItems);
   }, [initialItems]);
@@ -61,74 +64,81 @@ export default function DragDropList({
     );
 
     setItems(reorderedItems);
+
+    const newList = reorderedItems.map((item) => item.id);
+    console.log("Reordered:", newList);
+    console.log("Reordered items:", reorderedItems);
+    reorderTodo.mutate({ ids: reorderedItems.map((item) => item.id) });
   };
 
   return (
     <>
-     {items.length !== 0 && <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="droppable">
-        {(provided) => (
-          <div
-            className="border divide-y rounded-md"
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
-            {items.map((item, index) => (
-              <Draggable
-                key={item.id}
-                draggableId={`item-${item.id}`}
-                index={index}
+      {items.length !== 0 && (
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided) => (
+              <div
+                className="border divide-y rounded-md"
+                ref={provided.innerRef}
+                {...provided.droppableProps}
               >
-                {(provided, snapshot) => (
-                  <div
-                    className={cn(
-                      "flex hover:bg-muted py-2 px-4 gap-3 items-center",
-                      snapshot.isDragging && "bg-muted border"
-                    )}
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
+                {items.map((item, index) => (
+                  <Draggable
+                    key={item.id}
+                    draggableId={`item-${item.id}`}
+                    index={index}
                   >
-                    <input
-                      type="checkbox"
-                      id={`check-${item.id}`}
-                      checked={!!item.done}
-                      style={{ zoom: 1.4 }}
-                      onChange={() => updateStatusTodo(item)}
-                    />
-                    <label
-                      className={cn(
-                        "dark:text-white text-sm leading-none cursor-grab",
-                        item.done && "line-through"
-                      )}
-                      htmlFor={`check-${item.id}`}
-                    >
-                      {item.content}
-                    </label>
-                    <div className="ml-auto flex items-center">
-                      <Button
-                        className="h-7 px-2 border hover:border-primary hover:z-10 -mr-[1px] rounded-s-lg rounded-e-none"
-                        variant="ghost"
+                    {(provided, snapshot) => (
+                      <div
+                        className={cn(
+                          "flex hover:bg-muted py-2 px-4 gap-3 items-center",
+                          snapshot.isDragging && "bg-muted border"
+                        )}
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
                       >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        className="h-7 px-2 group border hover:border-primary hover:z-10 rounded-s-none rounded-e-lg"
-                        variant="ghost"
-                        onClick={() => handleRemoveTodo(item)}
-                      >
-                        <Trash className="w-4 h-4 stroke-red-400 group-hover:stroke-red-600" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>}
+                        <input
+                          type="checkbox"
+                          id={`check-${item.id}`}
+                          checked={!!item.done}
+                          style={{ zoom: 1.4 }}
+                          onChange={() => updateStatusTodo(item)}
+                        />
+                        <label
+                          className={cn(
+                            "dark:text-white text-sm leading-none cursor-grab",
+                            item.done && "line-through"
+                          )}
+                          htmlFor={`check-${item.id}`}
+                        >
+                          {item.content}
+                        </label>
+                        <div className="ml-auto flex items-center">
+                          <Button
+                            className="h-7 px-2 border hover:border-primary hover:z-10 -mr-[1px] rounded-s-lg rounded-e-none"
+                            variant="ghost"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            className="h-7 px-2 group border hover:border-primary hover:z-10 rounded-s-none rounded-e-lg"
+                            variant="ghost"
+                            onClick={() => handleRemoveTodo(item)}
+                          >
+                            <Trash className="w-4 h-4 stroke-red-400 group-hover:stroke-red-600" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      )}
     </>
   );
 }

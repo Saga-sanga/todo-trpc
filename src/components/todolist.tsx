@@ -22,7 +22,6 @@ type TodoListProps = {
 
 export default function TodoList({ initalTodos, session }: TodoListProps) {
   const utils = trpc.useContext();
-  // TODO: Update state from todo dnd component
   const getTodos = trpc.todos.getTodos.useQuery(
     session?.user?.email ?? "guest",
     {
@@ -110,7 +109,11 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
 
   const handleSubmit = async () => {
     if (content.length) {
-      addTodo.mutate({ content, userId: session?.user?.email ?? "guest" });
+      addTodo.mutate({
+        content,
+        userId: session?.user?.email ?? "guest",
+        position: getTodos.data.length,
+      });
       setContent("");
     }
   };
@@ -132,46 +135,8 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
           handleRemoveTodo={handleRemoveTodo}
           updateStatusTodo={updateStatusTodo}
         />
-        {/* {getTodos?.data?.map((todo) => (
-          <div
-            key={todo.id}
-            className="flex border border-b-0 last:border-b first:rounded-t-md last:rounded-b-md p-4 gap-3 items-center"
-          >
-            <input
-              type="checkbox"
-              id={`check-${todo.id}`}
-              checked={!!todo.done}
-              style={{ zoom: 1.4 }}
-              onChange={async () =>
-                setDone.mutate({ id: todo.id, done: !todo.done })
-              }
-            />
-            <label
-              className={cn(
-                "dark:text-white text-sm leading-none",
-                todo.done && "line-through"
-              )}
-              htmlFor={`check-${todo.id}`}
-            >
-              {todo.content}
-            </label>
-            <div className="ml-auto flex items-center">
-              <Button className="border border-r-0 rounded-s-lg rounded-e-none" variant="ghost">
-                <Edit className="w-4 h-4"/>
-              </Button>
-              <Button
-                className="group border rounded-s-none rounded-e-lg"
-                variant="ghost"
-                onClick={async () => removeTodo.mutate({ id: todo.id })}
-              >
-                <Trash className="w-4 h-4 stroke-red-400 group-hover:stroke-red-600" />
-              </Button>
-            </div>
-          </div>
-        ))} */}
       </div>
       <div className="flex gap-3 items-center">
-        {/* <label htmlFor="content">Todo</label> */}
         <input
           id="content"
           placeholder="Input todo"
