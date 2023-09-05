@@ -39,7 +39,7 @@ export default function TodoListItem({
       {editing ? (
         <input
           type="text"
-          className="text-sm border px-2 py-1 rounded-md border-primary focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          className="text-sm border px-2 py-1 rounded-md border-primary focus:outline-primary focus-visible:outline-primary focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
