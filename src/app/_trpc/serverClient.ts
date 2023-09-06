@@ -1,10 +1,10 @@
 import { appRouter } from "@/server";
-import { httpBatchLink } from "@trpc/client";
+import { Session } from "next-auth";
+import { createContext } from "./context";
+import { inferAsyncReturnType } from "@trpc/server";
 
-export const serverClient = appRouter.createCaller({
-  links: [
-    httpBatchLink({
-      url: "/api/trpc",
-    }),
-  ],
-});
+export const createServerClient = async (session: Session | null) =>
+  appRouter.createCaller(await createContext(session));
+
+// export type ServerClient = Awaited<ReturnType<typeof createServerClient>>;
+export type ServerClient = inferAsyncReturnType<typeof createServerClient>;

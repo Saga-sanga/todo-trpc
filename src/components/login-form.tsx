@@ -56,7 +56,7 @@ export default function LoginForm() {
                 <FormControl>
                   <Input className="peer h-10" {...field} required />
                 </FormControl>
-                <FormLabel className="font-normal peer-valid:-translate-y-4 peer-valid:scale-90 peer-focus:-translate-y-4 peer-focus:scale-90 peer-focus:text-black transition text-muted-foreground duration-50 ease-out cursor-text bg-white px-1 absolute top-0 translate-x-3 translate-y-1">
+                <FormLabel className="font-normal peer-valid:-translate-y-4 peer-valid:scale-90 peer-focus:-translate-y-4 peer-focus:scale-90 peer-focus:text-primary transition text-muted-foreground duration-50 ease-out cursor-text bg-background px-1 absolute top-0 translate-x-3 translate-y-1">
                   Email
                 </FormLabel>
                 {/* <FormDescription>Enter your email to login</FormDescription> */}

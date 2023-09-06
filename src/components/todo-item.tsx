@@ -39,7 +39,7 @@ export default function TodoListItem({
       {editing ? (
         <input
           type="text"
-          className="text-sm border px-2 py-1 rounded-md border-primary focus:outline-primary focus-visible:outline-primary focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          className="text-sm text-foreground w-full border px-2 py-1 rounded-md border-primary focus:outline-primary focus-visible:outline-primary focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
@@ -57,7 +57,7 @@ export default function TodoListItem({
       )}
       <div className="ml-auto flex items-center">
         <Button
-          className="h-7 px-2 border hover:border-primary hover:z-10 -mr-[1px] rounded-s-lg rounded-e-none"
+          className="h-7 px-2 border dark:text-accent-foreground hover:border-primary hover:z-10 -mr-[1px] rounded-s-lg rounded-e-none"
           variant="ghost"
           onClick={() => {
             setEditing((state) => !state);
