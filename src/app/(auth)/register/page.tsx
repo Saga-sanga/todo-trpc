@@ -1,10 +1,18 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import RegisterForm from "@/components/register-form";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ListTodo } from "lucide-react";
+import { getServerSession } from "next-auth";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function Page() {
+export default async function Page() {
+  const session = await getServerSession(authOptions);
+
+  if (session) {
+    redirect("/");
+  }
   return (
     <main className="grid lg:grid-cols-2 min-h-screen">
       <div className="hidden col-span-1 flex-col bg-primary p-10 text-background lg:flex">

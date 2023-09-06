@@ -3,8 +3,17 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { ChevronLeft, ListTodo } from "lucide-react";
 import LoginForm from "@/components/login-form";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { redirect } from "next/navigation";
 
-export default function Page() {
+export default async function Page() {
+  const session = await getServerSession(authOptions);
+  
+  if (session) {
+    redirect("/");
+  }
+
   return (
     <main className="relative space-y-6 min-h-screen grid place-content-center">
       <Link

@@ -6,6 +6,9 @@ import { db } from "@/server";
 
 export const authOptions: NextAuthOptions = {
   adapter: DrizzleAdapter(db),
+  pages: {
+    signIn: "/login",
+  },
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID as string,

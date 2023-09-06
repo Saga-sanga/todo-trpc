@@ -138,7 +138,7 @@ export default function TodoList({ initalTodos, session }: TodoListProps) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-          className="text-black flex-grow rounded-md border border-gray-300 py-2 px-4 focus:outline-primary focus-visible:outline-primary focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          className="text-foreground flex-grow rounded-md border border-gray-300 py-2 px-4 focus:outline-primary focus-visible:outline-primary focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           type="text"
         />
         <button
