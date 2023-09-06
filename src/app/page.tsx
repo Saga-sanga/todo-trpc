@@ -1,11 +1,12 @@
 import Navigation from "@/components/navigation";
 import TodoList from "@/components/todolist";
 import { getServerSession } from "next-auth/next";
-import { serverClient } from "./_trpc/serverClient";
 import { authOptions } from "./api/auth/[...nextauth]/authOptions";
+import { createServerClient } from "./_trpc/serverClient";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
+  const serverClient = await createServerClient(session);
   const initalTodos = await serverClient.todos.getTodos(
     session?.user?.email ?? "guest"
   );

@@ -1,17 +1,12 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
-import { cn } from "@/lib/utils";
-import { Trash2 as Trash, Edit } from "lucide-react";
 import { Session } from "next-auth";
-import { useEffect, useState } from "react";
-import { serverClient } from "../app/_trpc/serverClient";
+import { useState } from "react";
+import { type ServerClient } from "../app/_trpc/serverClient";
 import DragDropList from "./dnd-list";
-import TodoItem from "./todo-item";
-import { Button } from "./ui/button";
+import { inferAsyncReturnType } from "@trpc/server";
 
-export type TodoItems = Awaited<
-  ReturnType<(typeof serverClient)["todos"]["getTodos"]>
->;
+export type TodoItems = inferAsyncReturnType<ServerClient["todos"]["getTodos"]>;
 
 export type TodoItem = TodoItems[number];
 

@@ -1,11 +1,18 @@
 import * as schema from "@/db/schema";
 import { publicProcedure, router } from "../trpc";
-import { desc, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "..";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 
 export const todosRouter = router({
-  getTodos: publicProcedure.input(z.string()).query(async ({ input }) => {
+  getTodos: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    if (ctx.user?.email !== input && input !== "guest") {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+      });
+    }
+
     const todos = await db.query.todos.findMany({
       columns: {
         id: true,
@@ -13,7 +20,7 @@ export const todosRouter = router({
         done: true,
       },
       where: eq(schema.todos.userId, input),
-      orderBy: (todos, { asc }) => [desc(todos.position)],
+      orderBy: (todos, { asc }) => [asc(todos.position)],
     });
     return todos;
   }),
@@ -66,7 +73,7 @@ export const todosRouter = router({
     .input(z.object({ ids: z.array(z.number()) }))
     .mutation(async ({ input }) => {
       await Promise.all(
-        input.ids.reverse().map((id, position) => {
+        input.ids.map((id, position) => {
           return db
             .update(schema.todos)
             .set({ position })

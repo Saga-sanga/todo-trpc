@@ -6,13 +6,12 @@ import { authOptions } from "../../auth/[...nextauth]/authOptions";
 
 const handler = async (req: Request) => {
   const session = await getServerSession(authOptions);
-  console.log("Handler Session", session)
+
   return fetchRequestHandler({
     endpoint: "/api/trpc",
     req,
     router: appRouter,
-    createContext: async () =>
-      await createContext(session),
+    createContext: async () => await createContext(session),
   });
 };
 

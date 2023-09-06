@@ -6,10 +6,8 @@ import { Session } from "next-auth";
  * @link https://trpc.io/docs/context
  */
 export async function createContext(session: Session | null) {
-  // const user = {name: req.headers.get("username")}
-
   return {
-    session
+    user: session?.user,
   };
 }
 

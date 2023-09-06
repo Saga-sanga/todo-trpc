@@ -1,8 +1,10 @@
 import { appRouter } from "@/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/authOptions";
+import { Session } from "next-auth";
 import { createContext } from "./context";
+import { inferAsyncReturnType } from "@trpc/server";
 
-const session = await getServerSession(authOptions);
+export const createServerClient = async (session: Session | null) =>
+  appRouter.createCaller(await createContext(session));
 
-export const serverClient = appRouter.createCaller(await createContext(session));
+// export type ServerClient = Awaited<ReturnType<typeof createServerClient>>;
+export type ServerClient = inferAsyncReturnType<typeof createServerClient>;
