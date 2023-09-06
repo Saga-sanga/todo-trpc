@@ -1,10 +1,8 @@
 import { appRouter } from "@/server";
-import { httpBatchLink } from "@trpc/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/authOptions";
+import { createContext } from "./context";
 
-export const serverClient = appRouter.createCaller({
-  links: [
-    httpBatchLink({
-      url: "/api/trpc",
-    }),
-  ],
-});
+const session = await getServerSession(authOptions);
+
+export const serverClient = appRouter.createCaller(await createContext(session));

@@ -1,9 +1,8 @@
 import Navigation from "@/components/navigation";
-import UserData from "@/components/userData";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 import TodoList from "@/components/todolist";
+import { getServerSession } from "next-auth/next";
 import { serverClient } from "./_trpc/serverClient";
+import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
