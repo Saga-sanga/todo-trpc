@@ -3,6 +3,7 @@ import TodoList from "@/components/todolist";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 import { createServerClient } from "./_trpc/serverClient";
+import Footer from "@/components/footer";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -12,11 +13,11 @@ export default async function Home() {
   );
 
   return (
-    <div className="flex min-h-screen flex-col items-center space-y-6">
+    <div className="flex min-h-screen flex-col space-y-6">
       <header className="w-full border-b">
         <Navigation session={session} />
       </header>
-      <main className="flex flex-col items-center container">
+      <main className="flex flex-col flex-1 items-center container">
         {!session?.user && (
           <div className="text-center my-8">
             <h1 className="text-3xl font-medium">
@@ -29,6 +30,7 @@ export default async function Home() {
         )}
         <TodoList initalTodos={initalTodos} session={session} />
       </main>
+      <Footer />
     </div>
   );
 }
