@@ -57,7 +57,7 @@ export default function TodoListItem({
       )}
       <div className="ml-auto flex items-center">
         <Button
-          className="h-7 px-2 border hover:border-primary hover:z-10 -mr-[1px] rounded-s-lg rounded-e-none"
+          className="h-7 px-2 border dark:text-accent-foreground hover:border-primary hover:z-10 -mr-[1px] rounded-s-lg rounded-e-none"
           variant="ghost"
           onClick={() => {
             setEditing((state) => !state);
