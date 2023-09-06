@@ -4,10 +4,10 @@ import ModeToggle from "./mode-toggle";
 export default function Footer() {
   return (
     <footer className="border-t w-full">
-      <div className="container flex justify-between py-10 md:h-24">
-        <div className="flex items-center gap-2">
+      <div className="container flex flex-col sm:flex-row gap-4 items-center justify-between py-10 md:h-24">
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-2">
           <ListTodo className="w-7 h-7" />
-          <p className="text-sm">
+          <p className="text-sm text-center sm:text-left">
             Built by{" "}
             <a
               href="https://recksonk.in"
@@ -27,7 +27,7 @@ export default function Footer() {
             .
           </p>
         </div>
-        <ModeToggle/>
+        <ModeToggle />
       </div>
     </footer>
   );
