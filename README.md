@@ -17,8 +17,8 @@ Make sure you have the following installed in your system:
 - `cd` into the cloned directory
 - Run `cp .env.example .env.local` and set up env variables
 - Run `pnpm install` to install all the dependencies
-- Create an upstream to the main repo `git remote add upstream https://github.com/One-Click-Auth/auth_frontend`
-- To update your fork with the main repo run `git pull upstream next-app`. Make sure you update your repo regularly to keep up with the main repo.
+- Create an upstream to the main repo `git remote add upstream https://github.com/Saga-sanga/todo-trpc.git`
+- To update your fork with the main repo run `git pull upstream main`. Make sure you update your repo regularly to keep up with the main repo.
 - Create a new branch `git checkout -b <branch_name>`
 - Run `pnpm dev` and start developing
 
@@ -29,4 +29,3 @@ Make sure you have the following installed in your system:
 - [TRPC](https://trpc.io/)
 - [TailwindCSS](https://tailwindcss.com/)
 - [Shadcn](https://ui.shadcn.com/)
-
