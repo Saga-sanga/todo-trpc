@@ -1,7 +1,6 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import { cn } from "@/lib/utils";
-import { Edit, Trash2 as Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   DragDropContext,
@@ -9,9 +8,8 @@ import {
   DropResult,
   Droppable,
 } from "react-beautiful-dnd";
-import { TodoItem, TodoItems } from "./todolist";
-import { Button } from "./ui/button";
 import TodoListItem from "./todo-item";
+import { TodoItem, TodoItems } from "./todolist";
 
 type DragDropListProp = {
   initialItems: TodoItems;
@@ -33,7 +31,7 @@ export default function DragDropList({
   handleRemoveTodo,
   updateStatusTodo,
 }: DragDropListProp) {
-  const [items, setItems] = useState<TodoItems>(initialItems);
+  const [items, setItems] = useState<TodoItems>([]);
 
   const utils = trpc.useContext();
   const reorderTodo = trpc.todos.reorderTodos.useMutation({
@@ -100,42 +98,6 @@ export default function DragDropList({
                           handleRemoveTodo={handleRemoveTodo}
                           updateStatusTodo={updateStatusTodo}
                         />
-                        {/* <input
-                          type="checkbox"
-                          id={`check-${item.id}`}
-                          checked={!!item.done}
-                          style={{ zoom: 1.4 }}
-                          onChange={() => updateStatusTodo(item)}
-                        />
-                        {editing ? (
-                          <input type="text" value={item.content ?? ""} />
-                        ) : (
-                          <label
-                            className={cn(
-                              "dark:text-white text-sm leading-none cursor-grab",
-                              item.done && "line-through"
-                            )}
-                            htmlFor={`check-${item.id}`}
-                          >
-                            {item.content}
-                          </label>
-                        )}
-                        <div className="ml-auto flex items-center">
-                          <Button
-                            className="h-7 px-2 border hover:border-primary hover:z-10 -mr-[1px] rounded-s-lg rounded-e-none"
-                            variant="ghost"
-                            onClick={() => setEditing(state => !state)}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            className="h-7 px-2 group border hover:border-primary hover:z-10 rounded-s-none rounded-e-lg"
-                            variant="ghost"
-                            onClick={() => handleRemoveTodo(item)}
-                          >
-                            <Trash className="w-4 h-4 stroke-red-400 group-hover:stroke-red-600" />
-                          </Button>
-                        </div> */}
                       </div>
                     )}
                   </Draggable>
