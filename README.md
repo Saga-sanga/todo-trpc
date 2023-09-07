@@ -29,3 +29,9 @@ Make sure you have the following installed in your system:
 - [TRPC](https://trpc.io/)
 - [TailwindCSS](https://tailwindcss.com/)
 - [Shadcn](https://ui.shadcn.com/)
+
+## buy-me-a-coffee
+
+Want to show your support? Buy me a coffee
+
+<a href="https://www.buymeacoffee.com/recksonk94k" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
