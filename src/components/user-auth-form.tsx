@@ -44,7 +44,7 @@ export default function UserAuthForm() {
 
     setIsLoading(false);
 
-    if (signInResult.error) {
+    if (signInResult?.error) {
       return toast({
         title: "Cannot send mail",
         description:
