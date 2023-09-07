@@ -1,5 +1,5 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
-import RegisterForm from "@/components/register-form";
+import UserAuthForm from "@/components/user-auth-form";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ListTodo } from "lucide-react";
@@ -50,7 +50,7 @@ export default async function Page() {
             Enter your email below to create your account
           </p>
         </div>
-        <RegisterForm />
+        <UserAuthForm />
       </div>
     </main>
   );

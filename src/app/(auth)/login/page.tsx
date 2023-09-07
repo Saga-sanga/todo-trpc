@@ -2,14 +2,20 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { ChevronLeft, ListTodo } from "lucide-react";
-import LoginForm from "@/components/login-form";
+import UserAuthForm from "@/components/user-auth-form";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Login",
+  description: "Login to your account",
+};
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
-  
+
   if (session) {
     redirect("/");
   }
@@ -33,7 +39,7 @@ export default async function Page() {
           Enter your email below to login
         </p>
       </div>
-      <LoginForm />
+      <UserAuthForm />
     </main>
   );
 }
