@@ -34,7 +34,6 @@ export default function UserAuthForm() {
   });
 
   async function onSubmit(data: Schema) {
-    console.log({ data });
     setIsLoading(true);
 
     const signInResult = await signIn("email", {
@@ -44,6 +43,15 @@ export default function UserAuthForm() {
     });
 
     setIsLoading(false);
+
+    if (signInResult.error) {
+      return toast({
+        title: "Cannot send mail",
+        description:
+          "Your sign in request failed. Please try using Github or Google.",
+        variant: "destructive",
+      });
+    }
 
     if (!signInResult?.ok) {
       return toast({
