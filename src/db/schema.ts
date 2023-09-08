@@ -1,3 +1,4 @@
+import type { AdapterAccount } from "@auth/core/adapters";
 import { relations } from "drizzle-orm";
 import {
   boolean,
@@ -6,10 +7,8 @@ import {
   primaryKey,
   serial,
   text,
-  timestamp,
-  varchar,
+  timestamp
 } from "drizzle-orm/pg-core";
-import type { AdapterAccount } from "@auth/core/adapters";
 
 export const todos = pgTable("todo", {
   id: serial("id").primaryKey(),

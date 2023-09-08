@@ -1,9 +1,9 @@
 import { users } from "@/db/schema";
-import { db } from "..";
-import { router, publicProcedure, protectedProcedure } from "../trpc";
-import { z } from "zod";
-import { eq } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
+import { z } from "zod";
+import { db } from "..";
+import { protectedProcedure, router } from "../trpc";
 
 export const userRouter = router({
   getUser: protectedProcedure
