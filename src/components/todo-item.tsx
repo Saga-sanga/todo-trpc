@@ -25,7 +25,6 @@ export default function TodoListItem({
 
   const handleSubmit = () => {
     setEditing(false);
-    console.log(content);
     editTodo.mutate({ id: item.id, content });
   };
 

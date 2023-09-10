@@ -3,9 +3,7 @@ import { Context } from "@/app/_trpc/context";
 
 const t = initTRPC.context<Context>().create();
 
-const isAuthed = t.middleware(({ ctx, next, input }) => {
-  console.log({input});
-
+const isAuthed = t.middleware(({ ctx, next }) => {
   if (!ctx.user) {
     throw new TRPCError({
       code: "UNAUTHORIZED",

@@ -29,7 +29,6 @@ export default function RegisterForm() {
   });
 
   function onSubmit(data: Schema) {
-    console.log({ data });
     setIsLoading(true);
     alert(JSON.stringify(data));
   }

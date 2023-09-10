@@ -17,7 +17,11 @@ export const userRouter = router({
       }
 
       const [user] = await db
-        .select()
+        .select({
+          name: users.name,
+          email: users.email,
+          image: users.image
+        })
         .from(users)
         .where(eq(users.email, input.email));
       return user;
