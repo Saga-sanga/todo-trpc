@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { Provider } from "./_trpc/Provider";
-import { ThemeProvider } from "./providers/theme-provider";
+import { ThemeProvider } from "./_providers/theme-provider";
 import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });

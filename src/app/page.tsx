@@ -6,6 +6,7 @@ import { createServerClient } from "./_trpc/serverClient";
 import Footer from "@/components/footer";
 import Sidebar from "@/components/sidebar";
 import { dashboardConfig } from "@/config/dashboard";
+import { cn } from "@/lib/utils";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -19,10 +20,17 @@ export default async function Home() {
       <header className="w-full border-b">
         <Navigation session={session} />
       </header>
-      <div className="container flex-1 grid md:grid-cols-[200px_1fr]">
-        <aside className="hidden w-[200px] flex-col md:flex">
-          <Sidebar items={dashboardConfig.sidebarNav}/>
-        </aside>
+      <div
+        className={cn(
+          "container flex-1 grid",
+          session?.user && "md:grid-cols-[200px_1fr]"
+        )}
+      >
+        {session?.user && (
+          <aside className="hidden w-[200px] flex-col md:flex">
+            <Sidebar items={dashboardConfig.sidebarNav} />
+          </aside>
+        )}
         <main className="flex flex-col flex-1 items-center">
           {!session?.user && (
             <div className="text-center my-8">

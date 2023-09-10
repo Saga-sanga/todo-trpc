@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 export function UserNav({
   user,
@@ -39,16 +40,16 @@ export function UserNav({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            Profile
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard">Dashboard</Link>
             {/* <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut> */}
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            Billing
+          <DropdownMenuItem asChild>
+            <Link href="/billing">Billing</Link>
             {/* <DropdownMenuShortcut>⌘B</DropdownMenuShortcut> */}
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            Settings
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/settings">Settings</Link>
             {/* <DropdownMenuShortcut>⌘S</DropdownMenuShortcut> */}
           </DropdownMenuItem>
           {/* <DropdownMenuItem>New Team</DropdownMenuItem> */}

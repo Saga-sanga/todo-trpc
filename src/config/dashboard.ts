@@ -1,8 +1,8 @@
 export const dashboardConfig = {
   sidebarNav: [
     {
-      title: "Home",
-      href: "/",
+      title: "Todo Lists",
+      href: "/dashboard",
       icon: "home",
     },
     {
