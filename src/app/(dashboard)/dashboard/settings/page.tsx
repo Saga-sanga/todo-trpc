@@ -22,7 +22,7 @@ export default async function SettingsPage() {
   return (
     <DashboardShell>
       <DashboardHeader heading="Settings" text="Manage user account settings" />
-      <SettingsForm initialUser={initialUser} session={session}/>
+      <SettingsForm initialUser={initialUser} session={session} />
     </DashboardShell>
   );
 }

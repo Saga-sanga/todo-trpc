@@ -15,19 +15,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Icons } from "./icons";
-import { formSchema } from "@/db/validators";
+import { userAuthFormSchema } from "@/db/validators";
 import OAuthButtons from "./oauth-buttons";
 import { useToast } from "./ui/use-toast";
 import { signIn } from "next-auth/react";
 
-type Schema = z.infer<typeof formSchema>;
+type Schema = z.infer<typeof userAuthFormSchema>;
 
 export default function UserAuthForm() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<Schema>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(userAuthFormSchema),
     defaultValues: {
       email: "",
     },

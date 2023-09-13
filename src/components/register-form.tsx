@@ -1,6 +1,6 @@
 "use client";
 import { z } from "zod";
-import { formSchema } from "@/db/validators";
+import { userAuthFormSchema } from "@/db/validators";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -17,12 +17,12 @@ import { Button } from "./ui/button";
 import { Icons } from "./icons";
 import OAuthButtons from "./oauth-buttons";
 
-type Schema = z.infer<typeof formSchema>;
+type Schema = z.infer<typeof userAuthFormSchema>;
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<Schema>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(userAuthFormSchema),
     defaultValues: {
       email: "",
     },

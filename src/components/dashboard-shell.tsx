@@ -6,7 +6,7 @@ export default function DashboardShell({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("grid items-start gap-8", className)} {...props}>
+    <div className={cn("flex flex-col mx-auto w-full max-w-full md:max-w-4xl gap-8", className)} {...props}>
       {children}
     </div>
   );

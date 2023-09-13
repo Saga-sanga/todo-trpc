@@ -61,7 +61,7 @@ export default function DragDropList({
     setItems(reorderedItems);
 
     const newList = reorderedItems.map((item) => item.id);
-    reorderTodo.mutate({ ids: reorderedItems.map((item) => item.id) });
+    reorderTodo.mutate({ ids: newList });
   };
 
   return (
