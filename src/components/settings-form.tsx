@@ -22,6 +22,15 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+// import dynamic from "next/dynamic";
+
+export const dynamic = "force-dynamic";
+
+type GetS3Response = {
+  result: {
+    data: string;
+  };
+};
 
 type SettingsSchema = z.infer<typeof settingsFormSchema>;
 type UserData = inferAsyncReturnType<ServerClient["user"]["getUser"]>;
@@ -45,18 +54,18 @@ export default function SettingsForm({
   const [userImageURL, setUserImageURL] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const getPresignedUrl = trpc.user.getPresignedUrl.useQuery(
-    userImage?.name as string,
-    {
-      enabled: !!userImage,
-      staleTime: 30 * 10000, // Stale in 30 seconds
-      onSuccess: (data) => {
-        const uploadUrl = data.split("?")[0];
-        console.log("onSuccess", uploadUrl);
-        form.setValue("image", uploadUrl, { shouldDirty: true });
-      },
-    }
-  );
+  // const getPresignedUrl = trpc.user.getPresignedUrl.useQuery(
+  //   userImage?.name as string,
+  //   {
+  //     enabled: !!userImage,
+  //     staleTime: 30 * 10000, // Stale in 30 seconds
+  //     onSuccess: (data) => {
+  //       const uploadUrl = data.split("?")[0];
+  //       console.log("onSuccess", uploadUrl);
+  //       form.setValue("image", uploadUrl, { shouldDirty: true });
+  //     },
+  //   }
+  // );
 
   const form = useForm<SettingsSchema>({
     resolver: zodResolver(settingsFormSchema),
@@ -72,15 +81,14 @@ export default function SettingsForm({
     formState: { isDirty, isSubmitting },
   } = form;
 
-  const isDisabled = isSubmitting || !isDirty || getPresignedUrl.isFetching;
+  const isDisabled = isSubmitting || !isDirty;
 
   function handleImageInput(e: ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-    getPresignedUrl.refetch();
     if (e.target.files) {
       const limit = 5 * 1000000; // max limit 5mb
 
-      if (e.target.files[0].size > limit) {
+      if (e.target?.files[0].size > limit) {
         toast({
           variant: "destructive",
           title: "Image Size Exceeded",
@@ -88,20 +96,24 @@ export default function SettingsForm({
         });
         return;
       }
+      const objurl = URL.createObjectURL(e.target.files[0]);
       setUserImage(e.target.files[0]);
-      setUserImageURL(URL.createObjectURL(e.target.files[0]));
+      setUserImageURL(objurl);
+      form.setValue("image", objurl, { shouldDirty: true });
     } else {
       e.target.value = "";
     }
   }
 
-  async function uploadImageToS3() {
-    if (getPresignedUrl.data && userImage) {
-      const url = getPresignedUrl.data;
-
-      console.log(url);
-
+  async function uploadImageToS3(data: SettingsSchema) {
+    if (userImage) {
       try {
+        const res = await fetch(
+          `/api/trpc/user.getPresignedUrl?input="${userImage.name}"`
+        );
+        const presignedUrlResponse = (await res.json()) as GetS3Response;
+        const url = presignedUrlResponse.result.data;
+
         const S3Response = await fetch(url, {
           method: "PUT",
           headers: {
@@ -111,11 +123,13 @@ export default function SettingsForm({
         });
 
         if (S3Response.status === 200) {
-          return true;
+          const uploadUrl = url.split("?")[0];
+          data.image = uploadUrl;
+          return data;
         }
 
         if (S3Response.status !== 200) {
-          return false;
+          return;
         }
       } catch (error) {
         toast({
@@ -128,21 +142,30 @@ export default function SettingsForm({
   }
 
   async function onSubmit(data: SettingsSchema) {
-    let res: boolean | undefined = true;
+    // Execute only if image has been changed
     if (initialUser.image !== data.image) {
-      res = await uploadImageToS3();
+      const result = await uploadImageToS3(data);
+
+      if (result) {
+        data = result;
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Upload Error",
+          description: "Cannot update your data please try again.",
+        });
+        return;
+      }
     }
 
     // Update User data in DB
-    if (res) {
-      updateUser.mutate(data, {
-        onSuccess: () =>
-          toast({
-            title: "Success!",
-            description: "Profile updated successfully.",
-          }),
-      });
-    }
+    updateUser.mutate(data, {
+      onSuccess: () =>
+        toast({
+          title: "Success!",
+          description: "Profile updated successfully.",
+        }),
+    });
   }
 
   return (
@@ -179,11 +202,11 @@ export default function SettingsForm({
                     />
                   </label>
                 </FormControl>
-                <span>
+                {/* <span>
                   {getPresignedUrl.isFetching && (
                     <Icons.spinner className="w-3 h3 animate-spin" />
                   )}
-                </span>
+                </span> */}
               </FormItem>
             )}
           />
@@ -208,6 +231,7 @@ export default function SettingsForm({
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />

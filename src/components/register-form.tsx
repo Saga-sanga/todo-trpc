@@ -17,6 +17,9 @@ import { Button } from "./ui/button";
 import { Icons } from "./icons";
 import OAuthButtons from "./oauth-buttons";
 
+export const revalidate = 0;
+export const fetchCache = "'only-no-store'";
+
 type Schema = z.infer<typeof userAuthFormSchema>;
 
 export default function RegisterForm() {

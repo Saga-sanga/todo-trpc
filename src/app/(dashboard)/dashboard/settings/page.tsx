@@ -1,11 +1,9 @@
-import { trpc } from "@/app/_trpc/client";
 import { createServerClient } from "@/app/_trpc/serverClient";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import DashboardShell from "@/components/dashboard-shell";
 import DashboardHeader from "@/components/header";
 import SettingsForm from "@/components/settings-form";
 import { getServerSession } from "next-auth";
-import { useSession } from "next-auth/react";
 import { notFound } from "next/navigation";
 
 export default async function SettingsPage() {
