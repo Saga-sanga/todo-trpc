@@ -13,6 +13,7 @@ import {
 } from "./ui/dropdown-menu";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { abbrevateString } from "@/lib/utils";
 
 export function UserNav({
   user,
@@ -25,7 +26,7 @@ export function UserNav({
         <Button variant="ghost" className="h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
             <AvatarImage src={user?.image || ""} />
-            <AvatarFallback>RK</AvatarFallback>
+            <AvatarFallback>{abbrevateString(user?.name as string)}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

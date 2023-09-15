@@ -1,19 +1,17 @@
 "use client";
+import { trpc } from "@/app/_trpc/client";
+import { ServerClient } from "@/app/_trpc/serverClient";
+import { settingsFormSchema } from "@/db/validators";
 import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { inferAsyncReturnType } from "@trpc/server";
+import { Session } from "next-auth";
+import { ChangeEvent, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Icons } from "./icons";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button, buttonVariants } from "./ui/button";
-import { inferAsyncReturnType } from "@trpc/server";
-import { ServerClient } from "@/app/_trpc/serverClient";
-import { Session } from "next-auth";
-import { trpc } from "@/app/_trpc/client";
-import { Input } from "./ui/input";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useToast } from "./ui/use-toast";
-import { Icons } from "./icons";
-import { z } from "zod";
-import { settingsFormSchema } from "@/db/validators";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -22,7 +20,8 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-// import dynamic from "next/dynamic";
+import { Input } from "./ui/input";
+import { useToast } from "./ui/use-toast";
 
 export const dynamic = "force-dynamic";
 
@@ -52,20 +51,7 @@ export default function SettingsForm({
   const updateUser = trpc.user.updateUser.useMutation();
   const [userImage, setUserImage] = useState<File>();
   const [userImageURL, setUserImageURL] = useState<string>();
-  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  // const getPresignedUrl = trpc.user.getPresignedUrl.useQuery(
-  //   userImage?.name as string,
-  //   {
-  //     enabled: !!userImage,
-  //     staleTime: 30 * 10000, // Stale in 30 seconds
-  //     onSuccess: (data) => {
-  //       const uploadUrl = data.split("?")[0];
-  //       console.log("onSuccess", uploadUrl);
-  //       form.setValue("image", uploadUrl, { shouldDirty: true });
-  //     },
-  //   }
-  // );
 
   const form = useForm<SettingsSchema>({
     resolver: zodResolver(settingsFormSchema),
