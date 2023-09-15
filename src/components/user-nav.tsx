@@ -26,11 +26,11 @@ export function UserNav({
         <Button variant="ghost" className="h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
             <AvatarImage src={user?.image || ""} />
-            <AvatarFallback>{abbrevateString(user?.name as string)}</AvatarFallback>
+            <AvatarFallback>{user?.name && abbrevateString(user?.name as string)}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" forceMount>
+      <DropdownMenuContent className="min-w-[12rem]" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user?.name}</p>

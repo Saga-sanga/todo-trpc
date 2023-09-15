@@ -1,6 +1,7 @@
 import { createServerClient } from "@/app/_trpc/serverClient";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import DashboardShell from "@/components/dashboard-shell";
+import DeleteUserButton from "@/components/delete-user-btn";
 import DashboardHeader from "@/components/header";
 import SettingsForm from "@/components/settings-form";
 import { getServerSession } from "next-auth";
@@ -21,6 +22,8 @@ export default async function SettingsPage() {
     <DashboardShell>
       <DashboardHeader heading="Settings" text="Manage user account settings" />
       <SettingsForm initialUser={initialUser} session={session} />
+      <hr/>
+      <DeleteUserButton session={session}/>
     </DashboardShell>
   );
 }

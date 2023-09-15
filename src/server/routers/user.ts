@@ -51,4 +51,9 @@ export const userRouter = router({
       console.log(data);
       return data;
     }),
+  deleteUser: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input: { id } }) => {
+      return await db.delete(users).where(eq(users.id, id)).returning();
+    }),
 });

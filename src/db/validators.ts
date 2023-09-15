@@ -7,6 +7,6 @@ export const userAuthFormSchema = z.object({
 export const settingsFormSchema = z.object({
   email: z.string().email(),
   name: z.string(),
-  image: z.string(),
+  image: z.string().nullable(),
   id: z.string(),
 });

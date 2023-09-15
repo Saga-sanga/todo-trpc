@@ -57,7 +57,7 @@ export default function SettingsForm({
     resolver: zodResolver(settingsFormSchema),
     defaultValues: {
       email: getUser.data.email,
-      image: getUser.data.image ?? "",
+      image: getUser.data.image,
       name: getUser.data.name ?? "",
       id: getUser.data.id,
     },
@@ -71,7 +71,7 @@ export default function SettingsForm({
 
   function handleImageInput(e: ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-    if (e.target.files) {
+    if (e.target.files && e.target.files.length > 0) {
       const limit = 5 * 1000000; // max limit 5mb
 
       if (e.target?.files[0].size > limit) {
@@ -138,7 +138,7 @@ export default function SettingsForm({
         toast({
           variant: "destructive",
           title: "Upload Error",
-          description: "Cannot update your data please try again.",
+          description: "Cannot update your  `o;o`  please try again.",
         });
         return;
       }
