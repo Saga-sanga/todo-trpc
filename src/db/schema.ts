@@ -7,21 +7,37 @@ import {
   primaryKey,
   serial,
   text,
-  timestamp
+  timestamp,
 } from "drizzle-orm/pg-core";
+
+export const todolists = pgTable("todolist", {
+  id: serial("id").primaryKey(),
+  title: text("title"),
+  userId: text("user_id"),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
+  // updateAt: timestamp("updatedAt", { mode: "date" }).defaultNow().notNull(),
+});
+
+export const todolistsRelations = relations(todolists, ({ many, one }) => ({
+  todos: many(todos),
+  author: one(users, {
+    fields: [todolists.userId],
+    references: [users.id],
+  }),
+}));
 
 export const todos = pgTable("todo", {
   id: serial("id").primaryKey(),
   position: integer("position").default(0),
   content: text("content"),
-  userId: text("user_id"),
+  listId: text("list_id"),
   done: boolean("done"),
 });
 
 export const todosRelations = relations(todos, ({ one }) => ({
-  author: one(users, {
-    fields: [todos.userId],
-    references: [users.email],
+  todolists: one(todolists, {
+    fields: [todos.listId],
+    references: [todolists.id],
   }),
 }));
 
@@ -34,7 +50,7 @@ export const users = pgTable("user", {
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
-  todos: many(todos),
+  todolists: many(todolists),
 }));
 
 export const accounts = pgTable(
